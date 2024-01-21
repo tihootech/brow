@@ -1,9 +1,13 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+// LARAVEL BUILT-IN CLASSES
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// DEVELOPER CUSTOM CLASSES
+use App\Http\Controllers\Tmp\TestController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,19 +24,28 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
+        'laravelVersion' => '10.34.2',
         'phpVersion' => PHP_VERSION,
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::get('landing', function () {
+    $x = 'Ali';
+    return Inertia::render('Landing', compact('x'));
 });
 
+
+Route::prefix('dashboard')->middleware(['auth', 'verified'])->group(function(){
+    
+    // DASHBOARD MAIN (INDEX) PAGE
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+});
+
+// SOME TEST ROUTES, NOTE: SOON WILL BE REMOVED
+Route::prefix('test')->group(function () {
+    Route::get('faker', [TestController::class, 'fakerTest']);
+});
+
+// IMPORTING ROUTES IN OTHER FILES
 require __DIR__.'/auth.php';
